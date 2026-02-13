@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xueqiu.vulnscanpro.mapper.UserMapper">
+
+
+<!--  useGeneratedKeys 告诉MyBatis，数据库（如MySQL）将使用自增机制生成主键值，请去获取它
+      keyProperty      指定将获取到的自增主键值，设置回参数 User 对象的哪个属性。这里的 id 对应 User 实体类中的 id 字段 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into users(username, password_hash, email, role, is_active, created_at)
+        values(#{username}, #{passwordHash}, #{email}, #{role}, #{isActive}, #{createdAt})  # 参数为java类属性名 应该为驼峰命名
+    </insert>
+
+    <select id="selectByUsername" resultType="com.xueqiu.vulnscanpro.model.entity.User">
+        select * from users where username = #{username}
+    </select>
+
+    <select id="countByUsername" resultType="int">
+        select count(*) from users where username = #{username}
+    </select>
+
+    <select id="selectById" resultType="com.xueqiu.vulnscanpro.model.entity.User">
+        select * from users where id = #{id}
+    </select>
+
+
+    <update id="updateLastLoginTime" >
+        update users set last_login_at = #{loginTime} where id = #{id}
+    </update>
+
+
+</mapper>
+

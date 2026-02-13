@@ -1,0 +1,4 @@
+package com.xueqiu.vulnscanpro.controller;
+
+public class AssetController {
+}

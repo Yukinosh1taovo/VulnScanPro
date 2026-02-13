@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/vulnscan_platform
+    username: root
+    password: 1234
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml  # 指定Mapper XML文件位置
+  type-aliases-package: com.xueqiu.vulnscanpro.model.entity  # 实体类别名包
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 开发阶段显示sql
+    map-underscore-to-camel-case: true  # 开启下划线转驼峰，使字段名自动映射
+
+
+
+jwt:
+  secret: "lH7bw9qA6WnPpVrR2xKtY8zM0cN3jF5dCfXeBgT1hLzN8yM3j5F7dCgHvBbQ1oP9w2XeY6U4I8kkHJgfKLJ7rA"  # 密钥
+  expiration-ms: 86400000 # 24小时（单位：毫秒）
+
