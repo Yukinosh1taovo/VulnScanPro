@@ -1,3 +1,5 @@
+create database vulnscan_platform;
+
 -- 1. 用户表
 CREATE TABLE `users` (
                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户唯一标识',
@@ -8,6 +10,7 @@ CREATE TABLE `users` (
                          `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT '账户是否启用（1启用，0禁用）',
                          `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '账户创建时间',
                          `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+                         'last_login_at' timestamp null comment '记录用户最后登录时间',
                          PRIMARY KEY (`id`),
                          UNIQUE KEY `uk_users_username` (`username`),
                          KEY `idx_users_role` (`role`),
