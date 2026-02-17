@@ -66,6 +66,7 @@ public class AuthServiceImpl implements IAuthService {
 
         log.info("尝试登录用户:{}", username);
 
+
         // 1. 使用Spring Security进行身份认证
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
