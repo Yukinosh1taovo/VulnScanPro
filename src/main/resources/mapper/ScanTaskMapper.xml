@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xueqiu.vulnscanpro.mapper.ScanTaskMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.xueqiu.vulnscanpro.model.entity.ScanTask">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="taskName" column="task_name" />
+        <result property="target" column="target" />
+        <result property="scanPolicy" column="scan_policy" />
+        <result property="status" column="status" />
+        <result property="progress" column="progress" />
+        <result property="startTime" column="start_time" />
+        <result property="endTime" column="end_time" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, user_id, task_name, target, scan_policy, status, progress, start_time, end_time, created_at
+    </sql>
+
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"> </include>
+        from vulnscan_platform.scan_tasks
+        where user_id = #{userId}
+        order by created_at desc
+    </select>
+
+
+    <insert id="insert" parameterType="com.xueqiu.vulnscanpro.model.entity.ScanTask" useGeneratedKeys="true" keyProperty="id">
+        insert into vulnscan_platform.scan_tasks(user_id, task_name, target, scan_policy, status, progress, created_at)
+        VALUES (#{userId}, #{taskName}, #{target}, #{scanPolicy}, #{status}, #{progress}, #{createdAt})
+    </insert>
+
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from vulnscan_platform.scan_tasks
+        where id = #{id}
+    </select>
+
+
+    <delete id="deleteById">
+        delete from vulnscan_platform.scan_tasks where id = #{id}
+    </delete>
+
+
+    <update id="updateTaskStatus">
+        update vulnscan_platform.scan_tasks
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+</mapper>

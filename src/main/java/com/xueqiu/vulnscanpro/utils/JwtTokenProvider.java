@@ -1,5 +1,6 @@
 package com.xueqiu.vulnscanpro.utils;
 
+import com.xueqiu.vulnscanpro.model.entity.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -28,8 +29,9 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration-ms}")
     private long jwtExpirationInMs;
 
-    private Key key;
+    private Key key;  // 密钥对象 用于登录时签名生成token 验证时校验token
 
+    // 初始化加载密钥
     @PostConstruct
     public void init(){
 
@@ -41,11 +43,8 @@ public class JwtTokenProvider {
             throw new IllegalArgumentException("JWT密钥长度不足，请使用至少64字节的Base64密钥");
         }
 
-
-
-
         // 将密钥字符串转换为Key对象
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        this.key = Keys.hmacShaKeyFor(keyBytes);
 
         log.info("JWT密钥初始化成功，密钥长度: {} 位", keyBytes.length * 8);
     }
@@ -56,7 +55,7 @@ public class JwtTokenProvider {
      */
     public String generateToken(Authentication authentication) {
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
@@ -68,12 +67,14 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("userId", userDetails.getId())  // 将 userId 存入 Claim
                 .claim("authorities",authorities) // 自定义声明：权限
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     /**
      * 从 Token 中提取用户名
@@ -88,6 +89,16 @@ public class JwtTokenProvider {
 
         return claims.getSubject();
     }
+
+
+    // 从 Token 中提取 userId
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key).build()
+                .parseClaimsJws(token).getBody();
+        return claims.get("userId", Long.class);
+    }
+
 
     /**
      * 验证JWT令牌是否有效
@@ -113,8 +124,15 @@ public class JwtTokenProvider {
         return false;
     }
 
+
+    /**
+     *
+     * 返回jwt令牌过期时间
+     */
     public long getJwtExpirationInMs(){
         return jwtExpirationInMs;
     }
+
+
 
 }

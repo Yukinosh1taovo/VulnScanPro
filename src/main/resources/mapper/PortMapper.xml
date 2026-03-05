@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xueqiu.vulnscanpro.mapper.PortMapper">
+
+
+    <insert id="insert" parameterType="com.xueqiu.vulnscanpro.model.entity.Port" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO vulnscan_platform.ports (asset_id, port_number, protocol, service_name, version_info, state)
+        VALUES ( #{assetId}, #{portNumber}, #{protocol}, #{serviceName}, #{versionInfo}, #{state} )
+    </insert>
+
+
+
+</mapper>

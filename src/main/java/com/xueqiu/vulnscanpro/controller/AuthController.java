@@ -12,8 +12,6 @@ import com.xueqiu.vulnscanpro.service.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -56,6 +54,9 @@ public class AuthController {
         log.info("=== 开始处理登录请求 ===");
         log.info("登录请求:{}", loginRequest);
 
+
+        // 先注释验证码校验逻辑 方便测试
+/*
         // 1. === 校验验证码逻辑 ===
         String uuid = loginRequest.getCaptchaUuid();
         String userInputCode = loginRequest.getCaptchaCode();
@@ -75,6 +76,8 @@ public class AuthController {
         // 验证通过后，记得移除这个 Key，防止重复使用
         CAPTCHA_STORE.remove(uuid);
 
+        */
+
         try {
             // 调用Service进行认证并获取令牌
             LoginResponse loginResponse = authService.login(loginRequest);
@@ -85,12 +88,13 @@ public class AuthController {
         }
         catch (Exception e){
             log.error("登录失败");
-            String errorMessage = "账号或密码错误";
-            return ApiResponse.error(errorMessage);
+            return ApiResponse.error("账号或密码错误");
 
         }
     }
 
+
+    // 获取验证码接口
     @GetMapping("/captcha")
     public ApiResponse getCaptcha(){
         // 1. 生成线段干扰的验证码，宽100，高40

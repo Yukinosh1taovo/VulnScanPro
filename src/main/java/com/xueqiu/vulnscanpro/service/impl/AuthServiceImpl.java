@@ -18,15 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
-
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor // lombok构造器注入依赖
 public class AuthServiceImpl implements IAuthService {
 
     private final UserMapper userMapper; // MyBatis Mapper
-    private final PasswordEncoder passwordEncoder;   // 用于明文密码加密
-    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;   // 用于明文密码加密 在SecurityConfig类中指定使用BCrypt强哈希算法加密密码
+    private final AuthenticationManager authenticationManager; // 用于认证 在SecurityConfig类中初始化
     private final JwtTokenProvider jwtTokenProvider;
 
 
@@ -58,6 +57,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
+
     // 登录业务逻辑实现
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements IAuthService {
 
 
         // 1. 使用Spring Security进行身份认证
-        Authentication authentication = authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(  // 这里调用了UserDetailServiceImpl的 loadUserByUsername 方法
                 new UsernamePasswordAuthenticationToken(username, password)
         );
 

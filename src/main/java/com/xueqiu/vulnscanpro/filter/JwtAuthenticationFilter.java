@@ -1,5 +1,6 @@
 package com.xueqiu.vulnscanpro.filter;
 
+import com.xueqiu.vulnscanpro.model.entity.CustomUserDetails;
 import com.xueqiu.vulnscanpro.utils.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 @Slf4j
@@ -24,7 +26,16 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
+//    private final UserDetailsService userDetailsService;
+
+
+    private String getTokenFromRequest(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
 
     @Override
@@ -40,10 +51,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 2. 验证 Token
             if(token != null && jwtTokenProvider.validateToken(token)){
 
+                // 从 Token 中提取 ID
+                Long userId = jwtTokenProvider.getUserIdFromToken(token);
+
                 // 3. 从 Token 中提取用户名
                 String username = jwtTokenProvider.getUsernameFromToken(token);
+
+
                 // 4. 加载用户详情
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                CustomUserDetails userDetails = new CustomUserDetails(userId, username, "",true, new ArrayList<>()); // enabled先默认为true
 
                 // 5. 创建认证对象
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -52,7 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 6. 设置到 Security Context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             }
 
         }
@@ -60,15 +77,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.error("无法设置用户认证");
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // 过滤器放行
     }
 
-    private String getTokenFromRequest(HttpServletRequest request){
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
 
-    }
 }

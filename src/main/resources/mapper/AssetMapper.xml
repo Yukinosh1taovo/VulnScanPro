@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xueqiu.vulnscanpro.mapper.AssetMapper">
+
+    <resultMap id="AssetMap" type="com.xueqiu.vulnscanpro.model.entity.Asset">
+        <id property="id" column="id" />
+        <result property="taskId" column="task_id" />
+        <result property="ipAddress" column="ip_address" />
+        <result property="hostname" column="hostname" />
+        <result property="osGuess" column="os_guess" />
+        <result property="lastSeen" column="last_seen" />
+    </resultMap>
+
+    <select id="selectByTaskId" resultMap="AssetMap">
+        select id, task_id, ip_address, hostname, os_guess, last_seen
+        from vulnscan_platform.assets
+        where task_id = #{taskId}
+        order by last_seen desc
+    </select>
+
+    <insert id="insert" parameterType="com.xueqiu.vulnscanpro.model.entity.Asset" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO vulnscan_platform.assets(task_id, ip_address, hostname, os_guess, last_seen)
+        VALUES ( #{taskId}, #{ipAddress}, #{hostname}, #{osGuess}, #{lastSeen} )
+    </insert>
+
+
+
+
+</mapper>

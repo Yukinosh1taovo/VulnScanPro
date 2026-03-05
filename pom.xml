@@ -106,6 +106,12 @@
             <version>5.8.26</version>
         </dependency>
 
+<!--        Jackson 的 XML 扩展     -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

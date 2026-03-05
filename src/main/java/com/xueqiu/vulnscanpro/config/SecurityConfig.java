@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity // 该注解启用 Spring Security 的 web 安全功能。
 @EnableMethodSecurity
-@RequiredArgsConstructor
+@RequiredArgsConstructor // 配合private final 依赖注入
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
